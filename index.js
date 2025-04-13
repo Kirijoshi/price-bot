@@ -94,7 +94,13 @@ client.on("messageCreate", async (message) => {
 
     if (vehicleData[vehicleName]) {
       vehicleData[vehicleName].quantity = quantity;
-      message.channel.send(`✅ Updated quantity of ${vehicleName.charAt(0).toUpperCase() + vehicleName.slice(1)} to ${quantity}`);
+      const updatedMessage = await message.channel.send(`✅ Updated quantity of ${vehicleName.charAt(0).toUpperCase() + vehicleName.slice(1)} to ${quantity}`);
+      
+      // Delete the update confirmation message after 5 seconds
+      setTimeout(() => {
+        updatedMessage.delete();
+      }, 5000);
+
       message.delete();
     } else {
       message.channel.send("🚫 Vehicle not found!");
