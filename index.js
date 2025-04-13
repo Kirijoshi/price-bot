@@ -59,6 +59,7 @@ function loadVehicleData() {
   try {
     if (!fs.existsSync(vehiclesFile)) {
       // If the file doesn't exist, create it with initial data
+      console.log("vehicles.json not found, creating it with initial data.");
       saveVehicleData(initialVehicles);
       return initialVehicles;
     }
@@ -112,7 +113,7 @@ client.on('messageCreate', async message => {
 
     if (vehicleKey) {
       vehicles[vehicleKey].quantity = parseInt(quantity, 10);
-      saveVehicleData(vehicles);
+      saveVehicleData(vehicles); // Save changes to vehicles.json
       await message.delete(); // Delete the !editquantity command message
 
       // Send confirmation message with updated quantity
@@ -134,7 +135,7 @@ client.on('messageCreate', async message => {
 
     if (vehicleKey) {
       vehicles[vehicleKey].price = parseFloat(price);
-      saveVehicleData(vehicles);
+      saveVehicleData(vehicles); // Save changes to vehicles.json
       await message.delete(); // Delete the !editprices command message
 
       // Send confirmation message with updated price
