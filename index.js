@@ -1,20 +1,233 @@
-const { Client, Intents } = require("discord.js");
+const { Client, GatewayIntentBits } = require("discord.js");
+
 const client = new Client({
-  intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES],
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent, // Required to read message content
+  ],
 });
 
 client.once("ready", () => {
-  console.log("Bot has logged in successfully!");
+  console.log(`Logged in as ${client.user.tag}`);
 });
 
-client.on("messageCreate", (message) => {
-  // Check if the message is from the bot itself
+// Define vehicles and their properties
+const vehicleData = {
+  torpedo: {
+    price: 17.0,
+    available: ":white_check_mark:",
+    emoji: ":red_car:",
+  },
+  javelin: {
+    price: 15,
+    available: ":white_check_mark:",
+    emoji: ":rocket:",
+  },
+  beignet: {
+    price: 12.5,
+    available: ":white_check_mark:",
+    emoji: ":doughnut:",
+  },
+  celsior: {
+    price: 11.5,
+    available: ":x:",
+    emoji: ":red_car:",
+  },
+  "proto-08": {
+    price: 10.5,
+    available: ":white_check_mark:",
+    emoji: ":checkered_flag:",
+  },
+  arachnid: {
+    price: 8.0,
+    available: ":x:",
+    emoji: ":spider:",
+  },
+  icebreaker: {
+    price: 7.0,
+    available: ":white_check_mark:",
+    emoji: ":snowflake:",
+  },
+  "beam hybrid": {
+    price: 7.0,
+    available: ":x:",
+    emoji: ":zap:",
+  },
+  "banana car": {
+    price: 5.5,
+    available: ":x:",
+    emoji: ":banana:",
+  },
+  power1: {
+    price: 5.2,
+    available: ":white_check_mark:",
+    emoji: ":battery:",
+  },
+  molten: {
+    price: 5.2,
+    available: ":white_check_mark:",
+    emoji: ":fire:",
+  },
+  raptor: {
+    price: 4.8,
+    available: ":white_check_mark:",
+    emoji: ":t_rex:",
+  },
+  "crew capsule": {
+    price: 4.5,
+    available: ":white_check_mark:",
+    emoji: ":rocket:",
+  },
+  bandit: {
+    price: 4.0,
+    available: ":white_check_mark:",
+    emoji: ":pirate_flag:",
+  },
+  parisian: {
+    price: 3.8,
+    available: ":white_check_mark:",
+    emoji: ":tokyo_tower:",
+  },
+  aperture: {
+    price: 3.5,
+    available: ":white_check_mark:",
+    emoji: ":camera_with_flash:",
+  },
+  rattler: {
+    price: 3.2,
+    available: ":white_check_mark:",
+    emoji: ":snake:",
+  },
+  shogun: {
+    price: 3.0,
+    available: ":white_check_mark:",
+    emoji: ":crossed_swords:",
+  },
+  scorpion: {
+    price: 2.8,
+    available: ":white_check_mark:",
+    emoji: ":scorpion:",
+  },
+  carbonara: {
+    price: 2.5,
+    available: ":white_check_mark:",
+    emoji: ":spaghetti:",
+  },
+  volt: {
+    price: 2.3,
+    available: ":x:",
+    emoji: ":zap:",
+  },
+  goliath: {
+    price: 1.8,
+    available: ":white_check_mark:",
+    emoji: ":truck:",
+  },
+  jb8: {
+    price: 1.8,
+    available: ":x:",
+    emoji: ":performing_arts:",
+  },
+  macaron: {
+    price: 1.8,
+    available: ":white_check_mark:",
+    emoji: ":candy:",
+  },
+  torero: {
+    price: 1.6,
+    available: ":white_check_mark:",
+    emoji: ":ox:",
+  },
+  brulee: {
+    price: 1.6,
+    available: ":white_check_mark:",
+    emoji: ":race_car:",
+  },
+  snake: {
+    price: 1.4,
+    available: ":white_check_mark:",
+    emoji: ":snake:",
+  },
+  "tiny toy": {
+    price: 1.4,
+    available: ":white_check_mark:",
+    emoji: ":teddy_bear:",
+  },
+  wedge: {
+    price: 1.2,
+    available: ":white_check_mark:",
+    emoji: ":small_red_triangle:",
+  },
+  concept: {
+    price: 1.2,
+    available: ":white_check_mark:",
+    emoji: ":rocket:",
+  },
+  poseidon: {
+    price: 1.2,
+    available: ":white_check_mark:",
+    emoji: ":ocean:",
+  },
+  airtail: {
+    price: 1.0,
+    available: ":white_check_mark:",
+    emoji: ":airplane:",
+  },
+};
+
+// Order of the vehicles
+const vehicleOrder = [
+  "torpedo",
+  "javelin",
+  "beignet",
+  "celsior",
+  "proto-08",
+  "arachnid",
+  "icebreaker",
+  "beam hybrid",
+  "banana car",
+  "power1",
+  "molten",
+  "raptor",
+  "crew capsule",
+  "bandit",
+  "parisian",
+  "aperture",
+  "rattler",
+  "shogun",
+  "scorpion",
+  "carbonara",
+  "volt",
+  "goliath",
+  "jb8",
+  "macaron",
+  "torero",
+  "brulee",
+  "snake",
+  "tiny toy",
+  "wedge",
+  "concept",
+  "poseidon",
+  "airtail",
+];
+
+// Command to display prices and availability
+client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
-  // Command handling
-  if (message.content.toLowerCase() === "!hi") {
-    message.channel.send("Hi");
+  // Command to display prices and availability
+  if (message.content === "!prices") {
+    let priceMessage = "**# :red_car: Jailbreak Vehicle Price List :red_car:**\n\n";
+
+    // Loop through the vehicles in the specified order
+    vehicleOrder.forEach((vehicle) => {
+      const vehicleInfo = vehicleData[vehicle];
+      priceMessage += `${vehicleInfo.emoji} ${vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} – $${vehicleInfo.price} ............... ${vehicleInfo.available}\n`;
+    });
+
+    message.channel.send(priceMessage);
   }
 });
 
-client.login("YOUR_BOT_TOKEN"); // Make sure to replace this with your actual bot token
+client.login(process.env.DISCORD_TOKEN).catch(console.error);
