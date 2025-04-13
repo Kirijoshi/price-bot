@@ -114,12 +114,15 @@ const saveData = () => {
 client.on('messageCreate', async message => {
   if (message.author.bot) return;
 
-  // Command to get all vehicle prices
+  // Command to get all vehicle prices with quantities
   if (message.content.toLowerCase() === '!prices') {
     await message.delete(); // Delete the !prices command message
 
     const priceList = Object.entries(vehicleData.prices)
-      .map(([name, { price, emoji }]) => `${emoji} ${name}: $${price}`)
+      .map(([name, { price, emoji }]) => {
+        const quantity = vehicleData.quantities[name];
+        return `${emoji} ${name}: $${price} | Quantity: ${quantity}`;
+      })
       .join('\n');
     
     await message.channel.send(priceList);
