@@ -49,7 +49,6 @@ let vehicleData = {
     megalodon: 0.625,
     shellClassic: 0.625,
     maverick: 0.625,
-    javelin: 0.5,
   },
   quantities: {
     torpedo: 0,
@@ -93,7 +92,6 @@ let vehicleData = {
     megalodon: 0,
     shellClassic: 0,
     maverick: 0,
-    javelin: 0,
   },
 };
 
