@@ -216,11 +216,12 @@ const vehicleOrder = [
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
 
-  console.log("Received message:", message.content); // Debugging message content
+  console.log("Received message:", message.content); // This helps us see every message received by the bot.
 
   // Command to display prices and availability
   if (message.content === "!prices") {
-    console.log("Prices command received"); // Debugging prices command
+    console.log("Prices command received"); // This will show if it gets triggered multiple times.
+
     let priceMessage = "**# :red_car: Jailbreak Vehicle Price List :red_car:**\n\n";
 
     // Loop through the vehicles in the specified order
@@ -229,6 +230,7 @@ client.on("messageCreate", async (message) => {
       priceMessage += `${vehicleInfo.emoji} ${vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} – $${vehicleInfo.price} ............... ${vehicleInfo.available}\n`;
     });
 
+    console.log("Sending prices list"); // Check when the list is being sent
     message.channel.send(priceMessage);
   }
 
