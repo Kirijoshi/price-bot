@@ -12,43 +12,43 @@ let vehicleData = {
     javelin: 15,
     beignet: 13.5,
     celsior: 12,
-    proto8: 10.5,
-    arachnid: 9,
-    beamHybrid: 8.75,
-    icebreaker: 8.5,
-    banana: 7.5,
-    power1: 7,
-    moltenM12: 7,
-    raptor: 6.5,
-    crewCapsule: 6,
-    bantid: 4.5,
-    parisian: 4,
-    aperture: 3.75,
-    rattler: 3.5,
-    shogun: 3.25,
-    scorpion: 3,
-    carbonara: 2.75,
-    volt4x4: 2.5,
-    goliath: 2,
-    macaron: 2,
-    jb8: 2,
-    torero: 1.75,
-    brulee: 1.75,
-    snake: 1.5,
-    iceborn: 1.5,
-    airtail: 1.375,
-    poseidon: 1,
-    bloxy: 1,
-    wedge: 1,
-    jackRabbit: 1,
-    stormrider: 0.875,
-    longhorn: 0.875,
-    frostCrawler: 0.75,
-    ogMonster: 0.75,
-    striker: 0.625,
-    megalodon: 0.625,
-    shellClassic: 0.625,
-    maverick: 0.625,
+    proto8: 11,
+    arachnid: 10,
+    beamHybrid: 9.5,
+    icebreaker: 9,
+    banana: 8.5,
+    power1: 8,
+    moltenM12: 8,
+    raptor: 7.5,
+    crewCapsule: 7,
+    bantid: 6.5,
+    parisian: 6,
+    aperture: 5.5,
+    rattler: 5,
+    shogun: 4.5,
+    scorpion: 4,
+    carbonara: 3.5,
+    volt4x4: 3,
+    goliath: 2.5,
+    macaron: 2.5,
+    jb8: 2.5,
+    torero: 2.25,
+    brulee: 2.25,
+    snake: 2,
+    iceborn: 2,
+    airtail: 1.75,
+    poseidon: 1.5,
+    bloxy: 1.5,
+    wedge: 1.5,
+    jackRabbit: 1.5,
+    stormrider: 1.25,
+    longhorn: 1.25,
+    frostCrawler: 1,
+    ogMonster: 1,
+    striker: 0.75,
+    megalodon: 0.75,
+    shellClassic: 0.75,
+    maverick: 0.75,
   },
   quantities: {
     torpedo: 0,
@@ -120,8 +120,138 @@ client.on('messageCreate', async (message) => {
       .map((vehicle) => {
         const price = vehicleData.prices[vehicle];
         const quantity = vehicleData.quantities[vehicle];
-        const emoji = vehicle === 'javelin' ? '🚀' : '🚗'; // You can change the emojis here
-        return `${emoji} **${vehicle.charAt(0).toUpperCase() + vehicle.slice(1)}**: ${price} | Quantity: ${quantity}`;
+        let emoji = '';
+
+        // Assign original emojis to vehicles
+        switch (vehicle) {
+          case 'torpedo':
+            emoji = '🚗';
+            break;
+          case 'javelin':
+            emoji = '🚀';
+            break;
+          case 'beignet':
+            emoji = '🍩';
+            break;
+          case 'celsior':
+            emoji = '🚘';
+            break;
+          case 'proto8':
+            emoji = '🤖';
+            break;
+          case 'arachnid':
+            emoji = '🕷️';
+            break;
+          case 'beamHybrid':
+            emoji = '🔋';
+            break;
+          case 'icebreaker':
+            emoji = '❄️';
+            break;
+          case 'banana':
+            emoji = '🍌';
+            break;
+          case 'power1':
+            emoji = '⚡';
+            break;
+          case 'moltenM12':
+            emoji = '🔥';
+            break;
+          case 'raptor':
+            emoji = '🦖';
+            break;
+          case 'crewCapsule':
+            emoji = '🚀';
+            break;
+          case 'bantid':
+            emoji = '🐝';
+            break;
+          case 'parisian':
+            emoji = '🗼';
+            break;
+          case 'aperture':
+            emoji = '🔲';
+            break;
+          case 'rattler':
+            emoji = '🐍';
+            break;
+          case 'shogun':
+            emoji = '🥷';
+            break;
+          case 'scorpion':
+            emoji = '🦂';
+            break;
+          case 'carbonara':
+            emoji = '🍝';
+            break;
+          case 'volt4x4':
+            emoji = '🔌';
+            break;
+          case 'goliath':
+            emoji = '💪';
+            break;
+          case 'macaron':
+            emoji = '🍪';
+            break;
+          case 'jb8':
+            emoji = '🎮';
+            break;
+          case 'torero':
+            emoji = '🦸';
+            break;
+          case 'brulee':
+            emoji = '🍮';
+            break;
+          case 'snake':
+            emoji = '🐍';
+            break;
+          case 'iceborn':
+            emoji = '❄️';
+            break;
+          case 'airtail':
+            emoji = '✈️';
+            break;
+          case 'poseidon':
+            emoji = '🌊';
+            break;
+          case 'bloxy':
+            emoji = '🎮';
+            break;
+          case 'wedge':
+            emoji = '🧱';
+            break;
+          case 'jackRabbit':
+            emoji = '🐇';
+            break;
+          case 'stormrider':
+            emoji = '🌩️';
+            break;
+          case 'longhorn':
+            emoji = '🐂';
+            break;
+          case 'frostCrawler':
+            emoji = '❄️';
+            break;
+          case 'ogMonster':
+            emoji = '👹';
+            break;
+          case 'striker':
+            emoji = '🥊';
+            break;
+          case 'megalodon':
+            emoji = '🦈';
+            break;
+          case 'shellClassic':
+            emoji = '🐚';
+            break;
+          case 'maverick':
+            emoji = '🦅';
+            break;
+          default:
+            emoji = '🚗';
+        }
+
+        return `${emoji} **${vehicle.charAt(0).toUpperCase() + vehicle.slice(1)}**: $${price} | Quantity: ${quantity}`;
       })
       .join('\n');
 
