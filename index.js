@@ -102,6 +102,9 @@ client.on('messageCreate', async message => {
 
     const vehicles = loadVehicleData();
 
+    // Debugging: Log the vehicle names to see what we're comparing
+    console.log('Vehicle names:', Object.keys(vehicles));
+
     if (vehicles[vehicleName]) {
       vehicles[vehicleName].quantity = parseInt(quantity, 10);
       saveVehicleData(vehicles);
