@@ -113,6 +113,10 @@ client.on('messageCreate', async message => {
       vehicles[vehicleKey].quantity = parseInt(quantity, 10);
       saveVehicleData(vehicles);
       await message.delete(); // Delete the !editquantity command message
+
+      // Send confirmation message with updated quantity
+      const updatedVehicle = vehicles[vehicleKey];
+      message.channel.send(`${updatedVehicle.emoji} **${vehicleKey}:** $${updatedVehicle.price} | Quantity: ${updatedVehicle.quantity}`);
     } else {
       message.channel.send('Invalid vehicle name');
     }
@@ -131,6 +135,10 @@ client.on('messageCreate', async message => {
       vehicles[vehicleKey].price = parseFloat(price);
       saveVehicleData(vehicles);
       await message.delete(); // Delete the !editprices command message
+
+      // Send confirmation message with updated price
+      const updatedVehicle = vehicles[vehicleKey];
+      message.channel.send(`${updatedVehicle.emoji} **${vehicleKey}:** $${updatedVehicle.price} | Quantity: ${updatedVehicle.quantity}`);
     } else {
       message.channel.send('Invalid vehicle name');
     }
