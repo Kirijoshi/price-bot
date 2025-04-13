@@ -1,112 +1,140 @@
-const { Client, GatewayIntentBits } = require("discord.js");
-
+const { Client, GatewayIntentBits } = require('discord.js');
+require('dotenv').config();
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent, // Required to read message content
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.DirectMessages,
   ],
 });
 
-client.once("ready", () => {
-  console.log(`Logged in as ${client.user.tag}`);
-});
-
-// Define vehicles and their properties
-const vehicleData = {
-  torpedo: { price: 17, emoji: ":red_car:", quantity: 0 },
-  javelin: { price: 15, emoji: ":rocket:", quantity: 0 },
-  beignet: { price: 12.5, emoji: ":doughnut:", quantity: 0 },
-  celsior: { price: 11.5, emoji: ":red_car:", quantity: 0 },
-  "proto-08": { price: 10.5, emoji: ":checkered_flag:", quantity: 0 },
-  arachnid: { price: 8.0, emoji: ":spider:", quantity: 0 },
-  icebreaker: { price: 7.0, emoji: ":snowflake:", quantity: 0 },
-  "beam hybrid": { price: 7.0, emoji: ":zap:", quantity: 0 },
-  "banana car": { price: 5.5, emoji: ":banana:", quantity: 0 },
-  power1: { price: 5.2, emoji: ":battery:", quantity: 0 },
-  molten: { price: 5.2, emoji: ":fire:", quantity: 0 },
-  raptor: { price: 4.8, emoji: ":t_rex:", quantity: 0 },
-  "crew capsule": { price: 4.5, emoji: ":rocket:", quantity: 0 },
-  bandit: { price: 4.0, emoji: ":pirate_flag:", quantity: 0 },
-  parisian: { price: 3.8, emoji: ":tokyo_tower:", quantity: 0 },
-  aperture: { price: 3.5, emoji: ":camera_with_flash:", quantity: 0 },
-  rattler: { price: 3.2, emoji: ":snake:", quantity: 0 },
-  shogun: { price: 3.0, emoji: ":crossed_swords:", quantity: 0 },
-  scorpion: { price: 2.8, emoji: ":scorpion:", quantity: 0 },
-  carbonara: { price: 2.5, emoji: ":spaghetti:", quantity: 0 },
-  volt: { price: 2.3, emoji: ":zap:", quantity: 0 },
-  goliath: { price: 1.8, emoji: ":truck:", quantity: 0 },
-  jb8: { price: 1.8, emoji: ":performing_arts:", quantity: 0 },
-  macaron: { price: 1.8, emoji: ":candy:", quantity: 0 },
-  torero: { price: 1.6, emoji: ":ox:", quantity: 0 },
-  brulee: { price: 1.6, emoji: ":race_car:", quantity: 0 },
-  snake: { price: 1.4, emoji: ":snake:", quantity: 0 },
-  "tiny toy": { price: 1.4, emoji: ":teddy_bear:", quantity: 0 },
-  wedge: { price: 1.2, emoji: ":small_red_triangle:", quantity: 0 },
-  concept: { price: 1.2, emoji: ":rocket:", quantity: 0 },
-  poseidon: { price: 1.2, emoji: ":ocean:", quantity: 0 },
-  airtail: { price: 1.0, emoji: ":airplane:", quantity: 0 },
+const vehiclePrices = {
+  Torpedo: 17,
+  Javelin: 15,
+  Beignet: 13,
+  Celsior: 12,
+  Proto_8: 10,
+  Arachnid: 9,
+  Beam_Hybrid: 8,
+  Icebreaker: 7,
+  Banana: 6,
+  Power_1: 5,
+  Molten_M12: 5,
+  Raptor: 4,
+  Crew_Capsule: 3,
+  Bantid: 3,
+  Parisian: 2,
+  Aperture: 2,
+  Rattler: 2,
+  Shogun: 1,
+  Scorpion: 1,
+  Carbonara: 1,
+  Volt_4x4: 1,
+  Goliath: 1,
+  Macaron: 1,
+  JB8: 1,
+  Torero: 1,
+  Brûlée: 1,
+  Snake: 1,
+  Iceborn: 1,
+  Airtail: 1,
+  Poseidon: 1,
+  Bloxy: 1,
+  Wedge: 1,
+  Jack_Rabbit: 1,
+  Stormrider: 1,
+  Longhorn: 1,
+  Frost_Crawler: 1,
+  Og_Monster: 1,
+  Striker: 1,
+  Megalodon: 1,
+  Shell_Classic: 1,
+  Maverick: 1,
+  Javelin_1: 1,
 };
 
-// Order of the vehicles
-const vehicleOrder = [
-  "torpedo", "javelin", "beignet", "celsior", "proto-08", "arachnid", "icebreaker", "beam hybrid", "banana car", "power1",
-  "molten", "raptor", "crew capsule", "bandit", "parisian", "aperture", "rattler", "shogun", "scorpion", "carbonara",
-  "volt", "goliath", "jb8", "macaron", "torero", "brulee", "snake", "tiny toy", "wedge", "concept", "poseidon", "airtail"
-];
+let vehicleQuantities = {
+  Torpedo: 0,
+  Javelin: 0,
+  Beignet: 0,
+  Celsior: 0,
+  Proto_8: 0,
+  Arachnid: 0,
+  Beam_Hybrid: 0,
+  Icebreaker: 0,
+  Banana: 0,
+  Power_1: 0,
+  Molten_M12: 0,
+  Raptor: 0,
+  Crew_Capsule: 0,
+  Bantid: 0,
+  Parisian: 0,
+  Aperture: 0,
+  Rattler: 0,
+  Shogun: 0,
+  Scorpion: 0,
+  Carbonara: 0,
+  Volt_4x4: 0,
+  Goliath: 0,
+  Macaron: 0,
+  JB8: 0,
+  Torero: 0,
+  Brûlée: 0,
+  Snake: 0,
+  Iceborn: 0,
+  Airtail: 0,
+  Poseidon: 0,
+  Bloxy: 0,
+  Wedge: 0,
+  Jack_Rabbit: 0,
+  Stormrider: 0,
+  Longhorn: 0,
+  Frost_Crawler: 0,
+  Og_Monster: 0,
+  Striker: 0,
+  Megalodon: 0,
+  Shell_Classic: 0,
+  Maverick: 0,
+  Javelin_1: 0,
+};
 
-// Command to display prices and availability
-client.on("messageCreate", async (message) => {
+client.on('messageCreate', async (message) => {
+  // Ignore bot messages
   if (message.author.bot) return;
 
-  // Command to display prices and availability
-  if (message.content === "!prices") {
-    let priceMessage = "**# :red_car: Jailbreak Vehicle Price List :red_car:**\n\n";
+  // Delete !editprices message after updating prices
+  if (message.content.startsWith('!editprices')) {
+    const args = message.content.split(' ');
+    const vehicleName = args[1];
+    const newPrice = parseInt(args[2]);
 
-    // Loop through the vehicles in the specified order
-    vehicleOrder.forEach((vehicle) => {
-      const vehicleInfo = vehicleData[vehicle];
-      priceMessage += `${vehicleInfo.emoji} ${vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} – $${vehicleInfo.price} ............... ${vehicleInfo.quantity}\n`;
-    });
-
-    const sentMessage = await message.channel.send(priceMessage);
-
-    // Delete the previous price message
-    message.channel.messages.fetch({ limit: 2 }).then((messages) => {
-      messages.forEach((msg) => {
-        if (msg.author.bot && msg.id !== sentMessage.id) {
-          msg.delete();
-        }
-      });
-    });
-
-    // Delete the user's command message
-    message.delete();
+    if (vehiclePrices[vehicleName] !== undefined && !isNaN(newPrice)) {
+      vehiclePrices[vehicleName] = newPrice;
+      await message.delete(); // Delete the !editprices message after processing it
+    }
   }
 
-  // Command to update vehicle quantity
-  const editPriceRegex = /^!edit([a-zA-Z0-9-]+) (\d+)$/;
-  const match = message.content.match(editPriceRegex);
+  // Command to update quantity for vehicles
+  if (message.content.startsWith('!edit') && message.content.length > 6) {
+    const args = message.content.split(' ');
+    const vehicleName = args[0].slice(5); // Get vehicle name after "!edit"
+    const newQuantity = parseInt(args[1]);
 
-  if (match) {
-    const vehicleName = match[1].toLowerCase();
-    const quantity = parseInt(match[2], 10);
-
-    if (vehicleData[vehicleName]) {
-      vehicleData[vehicleName].quantity = quantity;
-      const updatedMessage = await message.channel.send(`✅ Updated quantity of ${vehicleName.charAt(0).toUpperCase() + vehicleName.slice(1)} to ${quantity}`);
-      
-      // Delete the update confirmation message after 5 seconds
-      setTimeout(() => {
-        updatedMessage.delete();
-      }, 5000);
-
-      message.delete();
-    } else {
-      message.channel.send("🚫 Vehicle not found!");
-      message.delete();
+    if (vehicleQuantities[vehicleName] !== undefined && !isNaN(newQuantity)) {
+      vehicleQuantities[vehicleName] = newQuantity;
+      await message.delete(); // Delete the !edit command message after processing it
     }
+  }
+
+  // Command to show prices
+  if (message.content === '!prices') {
+    let priceList = '**Vehicle Prices:**\n';
+    for (const [vehicle, price] of Object.entries(vehiclePrices)) {
+      priceList += `${vehicle}: $${price} | Quantity: ${vehicleQuantities[vehicle]}\n`;
+    }
+    await message.channel.send(priceList);
   }
 });
 
-client.login(process.env.DISCORD_TOKEN).catch(console.error);
+client.login(process.env.DISCORD_TOKEN);
