@@ -8,6 +8,9 @@ const client = new Client({
   ],
 });
 
+// Store user cooldowns using a Set
+const cooldowns = new Set();
+
 client.once("ready", () => {
   console.log(`Logged in as ${client.user.tag}`);
 });
@@ -212,26 +215,21 @@ const vehicleOrder = [
   "airtail",
 ];
 
-// Cooldown time (in milliseconds)
-const cooldownTime = 5000; // 5 seconds
-
 client.on("messageCreate", async (message) => {
   // Prevent the bot from responding to its own messages
   if (message.author.bot) return;
 
-  // Add a cooldown for the !prices command
-  if (!message.cooldown) message.cooldown = {};
+  // Check if the user is in cooldown
+  if (cooldowns.has(message.author.id)) {
+    return; // If the user is on cooldown, ignore the command
+  }
 
+  // Command to show prices
   if (message.content === "!prices") {
-    // Check if the command was triggered too soon
-    if (message.cooldown[message.author.id] && Date.now() - message.cooldown[message.author.id] < cooldownTime) {
-      return;
-    }
-
-    // Set cooldown for this user
-    message.cooldown[message.author.id] = Date.now();
-
     console.log("Prices command received"); // Debugging prices command
+
+    // Add user to cooldown set
+    cooldowns.add(message.author.id);
 
     let priceMessage = "**# :red_car: Jailbreak Vehicle Price List :red_car:**\n\n";
 
@@ -247,6 +245,11 @@ client.on("messageCreate", async (message) => {
     } catch (error) {
       console.error("Error sending message:", error);
     }
+
+    // Remove user from cooldown after 5 seconds
+    setTimeout(() => {
+      cooldowns.delete(message.author.id);
+    }, 5000);
   }
 
   // Command to update the price of a vehicle
