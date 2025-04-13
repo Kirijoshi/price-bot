@@ -57,11 +57,16 @@ const initialVehicles = {
 // Load vehicle data from the JSON file
 function loadVehicleData() {
   try {
+    if (!fs.existsSync(vehiclesFile)) {
+      // If the file doesn't exist, create it with initial data
+      saveVehicleData(initialVehicles);
+      return initialVehicles;
+    }
     const rawData = fs.readFileSync(vehiclesFile);
     return JSON.parse(rawData);
   } catch (err) {
     console.error('Error reading vehicles data:', err);
-    return initialVehicles; // If the file doesn't exist or there’s an error, use initial data
+    return initialVehicles; // If there's an error, use initial data
   }
 }
 
@@ -101,10 +106,6 @@ client.on('messageCreate', async message => {
     const [_, vehicleName, quantity] = message.content.split(' ');
 
     const vehicles = loadVehicleData();
-
-    // Log the vehicle name input and available vehicle names for comparison
-    console.log('Input vehicle name:', vehicleName);
-    console.log('Available vehicle names:', Object.keys(vehicles));
 
     // Check if the vehicle exists, case-insensitive
     const vehicleKey = Object.keys(vehicles).find(key => key.toLowerCase() === vehicleName.toLowerCase());
