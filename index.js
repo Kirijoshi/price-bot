@@ -1,100 +1,161 @@
-require("dotenv").config();
-const fs = require("fs");
-const { Client, GatewayIntentBits } = require("discord.js");
-
-const client = new Client({
+require('dotenv').config();
+const { Client, GatewayIntentBits } = require('discord.js');
+const client = new Client({ 
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.MessageContent,
-  ],
+  ] 
 });
 
-const DATA_FILE = "./vehicleData.json";
-
-// Initial vehicle data
-const defaultData = {
-  torpedo: { price: 17, quantity: 0, emoji: "🚀" },
-  javelin: { price: 15, quantity: 0, emoji: "🗡️" },
-  beignet: { price: 13, quantity: 0, emoji: "🍩" },
-  celsior: { price: 12.5, quantity: 0, emoji: "🚗" },
-  proto8: { price: 11, quantity: 0, emoji: "🔧" },
-  arachnid: { price: 10, quantity: 0, emoji: "🕷️" },
-  banana: { price: 8, quantity: 0, emoji: "🍌" },
-  volt: { price: 6, quantity: 0, emoji: "⚡" },
-  brutale: { price: 4.5, quantity: 0, emoji: "🔥" },
+// Vehicle Prices with emojis added back
+const vehiclePrices = {
+  Torpedo: { price: 17, emoji: '🚗' },
+  Javelin: { price: 15, emoji: '🚀' },
+  Beignet: { price: 13.5, emoji: '🍩' },
+  Celsior: { price: 12, emoji: '🚘' },
+  'Proto-8': { price: 11, emoji: '🤖' },
+  Arachnid: { price: 10, emoji: '🕷️' },
+  'Beam Hybrid': { price: 9.5, emoji: '🔋' },
+  Icebreaker: { price: 9, emoji: '❄️' },
+  Banana: { price: 8.5, emoji: '🍌' },
+  'Power-1': { price: 8, emoji: '⚡' },
+  'Molten M12': { price: 8, emoji: '🔥' },
+  Raptor: { price: 7.5, emoji: '🦖' },
+  'Crew Capsule': { price: 7, emoji: '🚀' },
+  Bantid: { price: 6.5, emoji: '🐝' },
+  Parisian: { price: 6, emoji: '🗼' },
+  Aperture: { price: 5.5, emoji: '🔲' },
+  Rattler: { price: 5, emoji: '🐍' },
+  Shogun: { price: 4.5, emoji: '🥷' },
+  Scorpion: { price: 4, emoji: '🦂' },
+  Carbonara: { price: 3.5, emoji: '🍝' },
+  'Volt 4x4': { price: 3, emoji: '🔌' },
+  Goliath: { price: 2.5, emoji: '💪' },
+  Macaron: { price: 2.5, emoji: '🍪' },
+  JB8: { price: 2.5, emoji: '🎮' },
+  Torero: { price: 2.25, emoji: '🦸' },
+  Brûlée: { price: 2.25, emoji: '🍮' },
+  Snake: { price: 2, emoji: '🐍' },
+  Iceborn: { price: 2, emoji: '❄️' },
+  Airtail: { price: 1.75, emoji: '✈️' },
+  Poseidon: { price: 1.5, emoji: '🌊' },
+  Bloxy: { price: 1.5, emoji: '🎮' },
+  Wedge: { price: 1.5, emoji: '🧱' },
+  'Jack Rabbit': { price: 1.5, emoji: '🐇' },
+  Stormrider: { price: 1.25, emoji: '🌩️' },
+  Longhorn: { price: 1.25, emoji: '🐂' },
+  'Frost Crawler': { price: 1, emoji: '❄️' },
+  'Og Monster': { price: 1, emoji: '👹' },
+  Striker: { price: 0.75, emoji: '🥊' },
+  Megalodon: { price: 0.75, emoji: '🦈' },
+  'Shell Classic': { price: 0.75, emoji: '🐚' },
+  Maverick: { price: 0.75, emoji: '🦅' },
+  Javelin: { price: 0.5, emoji: '🚀' },
 };
 
-// Load or initialize data
-let vehicleData = defaultData;
-if (fs.existsSync(DATA_FILE)) {
-  try {
-    vehicleData = JSON.parse(fs.readFileSync(DATA_FILE));
-  } catch (err) {
-    console.error("Error reading data file:", err);
-  }
-}
+// Vehicle Quantities (starting with 0)
+const vehicleQuantities = {
+  Torpedo: 0,
+  Javelin: 0,
+  Beignet: 0,
+  Celsior: 0,
+  'Proto-8': 0,
+  Arachnid: 0,
+  'Beam Hybrid': 0,
+  Icebreaker: 0,
+  Banana: 0,
+  'Power-1': 0,
+  'Molten M12': 0,
+  Raptor: 0,
+  'Crew Capsule': 0,
+  Bantid: 0,
+  Parisian: 0,
+  Aperture: 0,
+  Rattler: 0,
+  Shogun: 0,
+  Scorpion: 0,
+  Carbonara: 0,
+  'Volt 4x4': 0,
+  Goliath: 0,
+  Macaron: 0,
+  JB8: 0,
+  Torero: 0,
+  Brûlée: 0,
+  Snake: 0,
+  Iceborn: 0,
+  Airtail: 0,
+  Poseidon: 0,
+  Bloxy: 0,
+  Wedge: 0,
+  'Jack Rabbit': 0,
+  Stormrider: 0,
+  Longhorn: 0,
+  'Frost Crawler': 0,
+  'Og Monster': 0,
+  Striker: 0,
+  Megalodon: 0,
+  'Shell Classic': 0,
+  Maverick: 0,
+  Javelin: 0,
+};
 
-function saveData() {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(vehicleData, null, 2));
-}
-
-client.on("messageCreate", async (message) => {
+client.on('messageCreate', async message => {
   if (message.author.bot) return;
 
-  const content = message.content.trim();
-  const args = content.split(" ");
+  // Command to get all vehicle prices
+  if (message.content.toLowerCase() === '!prices') {
+    await message.delete(); // Delete the !prices command message
 
-  // !prices command
-  if (content === "!prices") {
-    let response = "**📊 Vehicle Prices & Stock**\n";
-    for (const [name, data] of Object.entries(vehicleData)) {
-      response += `${data.emoji} **${name.charAt(0).toUpperCase() + name.slice(1)}** — 💰 $${data.price} — 🚗 ${data.quantity}\n`;
-    }
-
-    // Delete previous price messages by the bot
-    const fetched = await message.channel.messages.fetch({ limit: 10 });
-    const botMessages = fetched.filter(
-      (m) => m.author.id === client.user.id && m.content.startsWith("**📊 Vehicle Prices")
-    );
-    for (const msg of botMessages.values()) {
-      await msg.delete().catch(() => {});
-    }
-
-    await message.channel.send(response);
+    const priceList = Object.entries(vehiclePrices)
+      .map(([name, { price, emoji }]) => `${emoji} ${name}: $${price}`)
+      .join('\n');
+    
+    await message.channel.send(priceList);
+    return;
   }
 
-  // !edit<vehiclename> <quantity>
-  if (content.startsWith("!edit")) {
-    const editCommand = content.split(" ")[0];
-    const vehicleName = editCommand.slice(5).toLowerCase();
-    const quantity = parseInt(args[1]);
+  // Command to update vehicle prices
+  if (message.content.toLowerCase().startsWith('!editprices')) {
+    const args = message.content.split(' ');
+    const vehicleName = args[1];
+    const newPrice = parseFloat(args[2]);
 
-    if (vehicleData[vehicleName] && !isNaN(quantity)) {
-      vehicleData[vehicleName].quantity = quantity;
-      saveData();
-
-      // Delete user message and don't reply
-      await message.delete().catch(() => {});
+    if (!vehiclePrices[vehicleName]) {
+      return message.channel.send('Invalid vehicle name.');
     }
+
+    if (isNaN(newPrice)) {
+      return message.channel.send('Please provide a valid price.');
+    }
+
+    vehiclePrices[vehicleName].price = newPrice;
+    await message.delete(); // Delete the !editprices command message
+
+    await message.channel.send(`Price of ${vehicleName} updated to $${newPrice}`);
+    return;
   }
 
-  // !editprices <vehicle> <price>
-  if (args[0] === "!editprices") {
-    const vehicle = args[1]?.toLowerCase();
-    const price = parseFloat(args[2]);
+  // Command to update vehicle quantity
+  if (message.content.toLowerCase().startsWith('!edit')) {
+    const args = message.content.split(' ');
+    const vehicleName = args[0].substring(5); // Remove the 'edit' part
+    const newQuantity = parseInt(args[1]);
 
-    if (vehicleData[vehicle] && !isNaN(price)) {
-      vehicleData[vehicle].price = price;
-      saveData();
-
-      await message.delete().catch(() => {});
+    if (!vehicleQuantities[vehicleName]) {
+      return message.channel.send('Invalid vehicle name.');
     }
-  }
-});
 
-client.once("ready", () => {
-  console.log(`🟢 Logged in as ${client.user.tag}`);
+    if (isNaN(newQuantity) || newQuantity < 0) {
+      return message.channel.send('Please provide a valid quantity.');
+    }
+
+    vehicleQuantities[vehicleName] = newQuantity;
+    await message.delete(); // Delete the !edit command message
+
+    await message.channel.send(`Quantity of ${vehicleName} updated to ${newQuantity}`);
+    return;
+  }
 });
 
 client.login(process.env.TOKEN);
