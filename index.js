@@ -212,15 +212,25 @@ const vehicleOrder = [
   "airtail",
 ];
 
-// Command to display prices and availability
+// Cooldown time (in milliseconds)
+const cooldownTime = 5000; // 5 seconds
+
 client.on("messageCreate", async (message) => {
   // Prevent the bot from responding to its own messages
   if (message.author.bot) return;
 
-  console.log("Received message:", message.content); // Debugging message content
+  // Add a cooldown for the !prices command
+  if (!message.cooldown) message.cooldown = {};
 
-  // Command to display prices and availability
   if (message.content === "!prices") {
+    // Check if the command was triggered too soon
+    if (message.cooldown[message.author.id] && Date.now() - message.cooldown[message.author.id] < cooldownTime) {
+      return;
+    }
+
+    // Set cooldown for this user
+    message.cooldown[message.author.id] = Date.now();
+
     console.log("Prices command received"); // Debugging prices command
 
     let priceMessage = "**# :red_car: Jailbreak Vehicle Price List :red_car:**\n\n";
@@ -231,12 +241,9 @@ client.on("messageCreate", async (message) => {
       priceMessage += `${vehicleInfo.emoji} ${vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} – $${vehicleInfo.price} ............... ${vehicleInfo.available}\n`;
     });
 
-    // Check if the message has already been sent
-    if (message.replied) return; // Ensure we don't send the same message multiple times
-
+    // Send the price message
     try {
       await message.channel.send(priceMessage);
-      message.replied = true;  // Flag the message as sent to avoid duplicates
     } catch (error) {
       console.error("Error sending message:", error);
     }
