@@ -231,7 +231,7 @@ client.on("messageCreate", async (message) => {
     });
 
     // Send the message with the price list
-    await message.channel.send(priceMessage);
+    message.channel.send(priceMessage).catch(console.error);
   }
 
   // Command to update the price of a vehicle
