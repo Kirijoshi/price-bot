@@ -222,6 +222,7 @@ client.on("messageCreate", async (message) => {
   // Command to display prices and availability
   if (message.content === "!prices") {
     console.log("Prices command received"); // Debugging prices command
+
     let priceMessage = "**# :red_car: Jailbreak Vehicle Price List :red_car:**\n\n";
 
     // Loop through the vehicles in the specified order
@@ -230,8 +231,15 @@ client.on("messageCreate", async (message) => {
       priceMessage += `${vehicleInfo.emoji} ${vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} – $${vehicleInfo.price} ............... ${vehicleInfo.available}\n`;
     });
 
-    // Send the message with the price list
-    message.channel.send(priceMessage).catch(console.error);
+    // Check if the message has already been sent
+    if (message.replied) return; // Ensure we don't send the same message multiple times
+
+    try {
+      await message.channel.send(priceMessage);
+      message.replied = true;  // Flag the message as sent to avoid duplicates
+    } catch (error) {
+      console.error("Error sending message:", error);
+    }
   }
 
   // Command to update the price of a vehicle
