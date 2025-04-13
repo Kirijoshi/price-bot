@@ -1,24 +1,19 @@
-const { Client, GatewayIntentBits } = require("discord.js");
-
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent, // Required to read message content
-  ],
+const { Client, GatewayIntentBits } = require('discord.js');
+const client = new Client({ 
+  intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] 
 });
 
-client.once("ready", () => {
-  console.log("Bot is online and ready!"); // Logs when the bot starts
+client.once('ready', () => {
+  console.log('Bot is online');
 });
 
-client.on("messageCreate", (message) => {
-  if (message.author.bot) return; // Ignore bot messages
+client.on('messageCreate', (message) => {
+  if (message.author.bot) return;
 
-  if (message.content === "!hello") {
-    message.channel.send("Hello World!"); // Sends a message when !hello is typed
+  if (message.content === '!hello') {
+    console.log('Sending Hello World!');
+    message.channel.send('Hello World!');
   }
 });
 
-// Login with your bot's token
-client.login(process.env.DISCORD_TOKEN).catch(console.error);
+client.login(process.env.DISCORD_TOKEN);
