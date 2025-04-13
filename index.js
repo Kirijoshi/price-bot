@@ -102,11 +102,15 @@ client.on('messageCreate', async message => {
 
     const vehicles = loadVehicleData();
 
-    // Debugging: Log the vehicle names to see what we're comparing
-    console.log('Vehicle names:', Object.keys(vehicles));
+    // Log the vehicle name input and available vehicle names for comparison
+    console.log('Input vehicle name:', vehicleName);
+    console.log('Available vehicle names:', Object.keys(vehicles));
 
-    if (vehicles[vehicleName]) {
-      vehicles[vehicleName].quantity = parseInt(quantity, 10);
+    // Check if the vehicle exists, case-insensitive
+    const vehicleKey = Object.keys(vehicles).find(key => key.toLowerCase() === vehicleName.toLowerCase());
+
+    if (vehicleKey) {
+      vehicles[vehicleKey].quantity = parseInt(quantity, 10);
       saveVehicleData(vehicles);
       await message.delete(); // Delete the !editquantity command message
     } else {
