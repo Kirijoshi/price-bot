@@ -84,7 +84,7 @@ client.once('ready', () => {
 client.on('messageCreate', async message => {
   if (message.content.toLowerCase() === '!prices') {
     const vehicles = loadVehicleData();
-    let priceList = '🚗 **Vehicle Prices and Quantities:**\n';
+    let priceList = '';
 
     // Iterate over each vehicle and build the price list message
     for (const [name, data] of Object.entries(vehicles)) {
