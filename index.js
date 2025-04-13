@@ -124,8 +124,11 @@ client.on('messageCreate', async message => {
 
     const vehicles = loadVehicleData();
 
-    if (vehicles[vehicleName]) {
-      vehicles[vehicleName].price = parseFloat(price);
+    // Check if the vehicle exists, case-insensitive
+    const vehicleKey = Object.keys(vehicles).find(key => key.toLowerCase() === vehicleName.toLowerCase());
+
+    if (vehicleKey) {
+      vehicles[vehicleKey].price = parseFloat(price);
       saveVehicleData(vehicles);
       await message.delete(); // Delete the !editprices command message
     } else {
